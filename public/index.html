@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lucid</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  </head>
+  <style>
+    body {
+      margin: 0 auto;
+      max-width: 65ex;
+      font-family: SF Mono, monospace;
+    }
+    #lucid {
+      margin-left: 1em;
+      margin-right: 1em;
+    }
+    #buttons {
+      width: 100%;
+      background: white;
+      padding: 1em 0em;
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0px;
+      border-bottom: 1px dashed darkslategray;
+    }
+    #texteditor {
+      margin: 1em auto;
+      color: darkslategray;
+      max-width: 65ex;
+      font-size: 0.8em;
+    }
+    #texteditor:focus {
+      outline: none;
+    }↕︎
+    button:focus {
+      outline: none;
+    }
+  </style>
+  <body>
+    <div id="lucid">
+      <div id="buttons">
+        <button onclick="handleTextSize(this)" value="-">Aa -</button>
+        <button onclick="handleTextSize(this)" value="+">Aa +</button>
+        <button onclick="handleTextSpacing(this)" value="-">↕︎ -</button>
+        <button onclick="handleTextSpacing(this)" value="+">↕︎ +</button>
+      </div>
+      <div id="texteditor" contenteditable="true" oninput="inputhandler(this)">
+        paste text here
+      </div>
+    </div>
+    <script type="text/javascript">
+
+      texteditor.style.lineHeight = "2.5em";
+      texteditor.style.fontSize = "0.8em";
+
+      texteditor.innerText = window.localStorage.innerText || `
+      Sonnet 29
+        When, in disgrace with fortune and men's eyes,
+        I all alone beweep my outcast state,
+        And trouble deaf heaven with my bootless cries,
+        And look upon myself, and curse my fate,
+        Wishing me like to one more rich in hope,
+        Featured like him, like him with friends possessed,
+        Desiring this man's art and that man's scope,
+        With what I most enjoy contented least;
+        Yet in these thoughts myself almost despising,
+        Haply I think on thee—and then my state,
+        Like to the lark at break of day arising
+        From sullen earth, sings hymns at heaven's gate;
+          For thy sweet love rememb'red such wealth brings
+          That then I scorn to change my state with kings.
+      `;
+
+      function inputhandler(e) {
+        console.log('oninput', e);
+        window.localStorage.innerText = e.innerText;
+      }
+
+      texteditor.addEventListener("paste", function(e) {
+        console.log(e);
+          e.preventDefault();
+
+          if (e.clipboardData) {
+              content = (e.originalEvent || e).clipboardData.getData('text/plain');
+
+              document.execCommand('insertText', false, content);
+          }
+          else if (window.clipboardData) {
+              content = window.clipboardData.getData('Text');
+
+              document.selection.createRange().pasteHTML(content);
+          }
+      });
+
+      function handleTextSize(e) {
+        texteditor.style.fontSize = e.value == '+' ? parseFloat(texteditor.style.fontSize) + .1 + 'em' : parseFloat(texteditor.style.fontSize) - .1 + 'em';
+      }
+
+      function handleTextSpacing(e) {
+        texteditor.style.lineHeight = e.value == '+' ? parseFloat(texteditor.style.lineHeight) + .5 + 'em' : parseFloat(texteditor.style.lineHeight) - .5 + 'em';
+        console.log(texteditor.style.lineHeight);
+      }
+    </script>
+  </body>
+</html>
